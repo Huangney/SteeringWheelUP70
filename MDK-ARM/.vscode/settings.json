@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "gpio.h": "c",
+        "main.h": "c",
+        "fdcan.h": "c",
+        "bsp_fdcan.h": "c",
+        "ws2812_yx.h": "c",
+        "as5047.h": "c",
+        "math.h": "c",
+        "pids.h": "c",
+        "limits": "c",
+        "motor_c620.h": "c",
+        "spi.h": "c",
+        "stm32g4xx_hal.h": "c",
+        "stm32g4xx_it.h": "c",
+        "usart.h": "c",
+        "dma.h": "c",
+        "algorithm.h": "c",
+        "cmath": "c",
+        "string.h": "c",
+        "stdio.h": "c",
+        "motor_vesc.h": "c"
+    }
+}
