@@ -3,21 +3,21 @@
         {
             "name": "SteeringWheelUP70",
             "includePath": [
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Core\\Inc",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Drivers\\STM32G4xx_HAL_Driver\\Inc",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Drivers\\STM32G4xx_HAL_Driver\\Inc\\Legacy",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Drivers\\CMSIS\\Device\\ST\\STM32G4xx\\Include",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Drivers\\CMSIS\\Include",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Libs",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Libs\\Src",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Libs\\Inc",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Core\\Inc",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Drivers\\STM32G4xx_HAL_Driver\\Inc",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Drivers\\STM32G4xx_HAL_Driver\\Inc\\Legacy",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Drivers\\CMSIS\\Device\\ST\\STM32G4xx\\Include",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Drivers\\CMSIS\\Include",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Libs",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Libs\\Src",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Libs\\Inc",
                 "C:\\Keil_v5\\ARM\\ARMCLANG\\include",
                 "C:\\Keil_v5\\ARM\\ARMCLANG\\include\\arm_linux",
                 "C:\\Keil_v5\\ARM\\ARMCLANG\\include\\arm_linux_compat",
                 "C:\\Keil_v5\\ARM\\ARMCLANG\\include\\libcxx",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\MDK-ARM",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Core\\Src",
-                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70_1 - 副本\\Drivers\\STM32G4xx_HAL_Driver\\Src"
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\MDK-ARM",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Core\\Src",
+                "e:\\杂物文件\\UP70电控2025\\舵轮代码\\SteeringWheelUP70\\Drivers\\STM32G4xx_HAL_Driver\\Src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

@@ -31,13 +31,13 @@ typedef struct pids
 
     float control_value; // 新增：控制量累加值
     
-    float (*calc_output)(struct pids* targ_pid, float error);
+    float (*calc_output)(struct pids* targ_pid, float error, float output_lim);
     float (*calc_increment)(struct pids* targ_pid, float error); // 增量式PID计算函数
     float (*calc_output_incremental)(struct pids* targ_pid, float error, float output_lim); // 新增：带内部累加的增量式PID计算函数
 }Pids;
 
 Pids pids_create_init(float Kp, float Ki, float Kd, float delta_t, float inte_limit, float delta_filter_rate, int reverse);
-float calc_output(struct pids* targ_pid, float error);
+float calc_output(struct pids* targ_pid, float error, float output_lim);
 float calc_increment(struct pids* targ_pid, float error);
 float calc_output_incremental(struct pids* targ_pid, float error, float output_lim); // 新增：带内部累加的增量式PID计算函数声明
 void pids_change_param(Pids *targ_pid, float Kp, float Ki, float Kd);

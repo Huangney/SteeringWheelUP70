@@ -61,7 +61,7 @@ void pids_reset(Pids *targ_pid)
     targ_pid->control_value = 0;
 }
 
-float calc_output(struct pids* targ_pid, float error)
+float calc_output(struct pids* targ_pid, float error, float output_lim)
 {
     float pid_output;
 
@@ -90,6 +90,12 @@ float calc_output(struct pids* targ_pid, float error)
         pid_output = -pid_output;
     }
     
+    // 应用输出限幅（如果配置了限幅）
+    if (output_lim > 0)
+    {
+        pid_output = limit_ab(pid_output, output_lim);
+    }
+
     return pid_output;
 }
 

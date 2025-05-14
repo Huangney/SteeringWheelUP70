@@ -57,7 +57,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#define STEER_DEBUG
+
 
 
 #ifdef STEER_DEBUG
@@ -141,7 +141,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 		HAL_FDCAN_GetRxMessage(&hfdcan1, FDCAN_RX_FIFO0, &RxMessage, Data);
 
 		read_3508_id = RxMessage.Identifier;
-    if((RxMessage.Identifier & 0x200) == 0x200)   // 如果是收到的 C620 的消息
+    if((RxMessage.Identifier >> 8) == 0x02)   // 如果是收到的 C620 的消息
     {
       // 注意，因为这里只控制了一个3508，所以可以这样子写
       if (M3508.motor_id == 0)
@@ -149,6 +149,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
         M3508.motor_id = RxMessage.Identifier;
       }
       
+			if(RxMessage.Identifier == M3508.motor_id)
       M3508.msg_cnt++ <= 50 ? get_moto_offset(&M3508, Data) : get_moto_measure(&M3508, Data);
 
       // 预热3508
@@ -165,8 +166,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
         {
           set_angle_degree = recv_angle_deg;
           minor_angle_ouput = get_minor_arc(angle_deg, set_angle_degree);
-          targ_speed = m3508_posi_pid.calc_output(&m3508_posi_pid, minor_angle_ouput);
-          motor_c620_set_rpm(targ_speed, targ_speed, targ_speed, targ_speed, 10000);
+          targ_speed = m3508_posi_pid.calc_output(&m3508_posi_pid, minor_angle_ouput, 8000);
+          motor_c620_set_rpm(targ_speed, targ_speed, targ_speed, targ_speed, 16000);
         }
         else
         {
@@ -181,7 +182,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
           // 位置（角度）环的DEBUG，请在main.c的上面激活
           #ifdef STEER_POSITION_DEBUG
           minor_angle_ouput = get_minor_arc(angle_deg, angle_degree_debug);
-          targ_speed = m3508_posi_pid.calc_output_incremental(&m3508_posi_pid, minor_angle_ouput, 7500);
+          targ_speed = m3508_posi_pid.calc_output(&m3508_posi_pid, minor_angle_ouput, 8000);
           motor_c620_set_rpm(targ_speed, targ_speed, targ_speed, targ_speed, 16000);
           #endif
 
@@ -312,7 +313,7 @@ int main(void)
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   // 轮1
-	m3508_posi_pid = pids_create_init(256, 72, 0, 0.001, 7500, 0.35, 0);
+	m3508_posi_pid = pids_create_init(256, 64, 0, 0.001, 8000, 0.15, 0);
   
   
   // 请在其他部分初始化好了之后，再启动CAN总线

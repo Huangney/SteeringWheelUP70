@@ -288,7 +288,7 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void)
   {
     test_rpm_value = 0;    // 禁止电机转动
   }
-  
+  #else
   #endif
   /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
   HAL_TIM_IRQHandler(&htim17);
@@ -360,14 +360,15 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
-/**
+/**0
   * @brief This function handles TIM7 global interrupt, DAC2 and DAC4 channel underrun error interrupts.
   */
 void TIM7_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_DAC_IRQn 0 */
 
-  snprintf((char*)vofa_send_buffers, sizeof(vofa_send_buffers), "d:%.1f,%.1f,%.1f\n", angle_deg, angle_degree_debug, targ_speed / 300.0);
+  snprintf((char*)vofa_send_buffers, sizeof(vofa_send_buffers), "d:%.1f,%.1f,%d,%d\n", angle_deg, angle_degree_debug, targ_speed, M3508.speed_rpm);
+  // snprintf((char*)vofa_send_buffers, sizeof(vofa_send_buffers), "d:%.1f\n", angle_deg);
   HAL_UART_Transmit_DMA(&huart3, vofa_send_buffers, sizeof(vofa_send_buffers));
 
   /* USER CODE END TIM7_DAC_IRQn 0 */

@@ -33,9 +33,10 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 
 // #define Steer_Wheel_1
-#define Steer_Wheel_2
-// #define Steer_Wheel_3
+// #define Steer_Wheel_2
+#define Steer_Wheel_3
 
+// #define STEER_DEBUG
 
 #ifdef Steer_Wheel_1
 #define My_Steer_ID 1

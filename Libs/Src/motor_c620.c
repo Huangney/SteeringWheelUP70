@@ -22,9 +22,19 @@ float preheated_time = 0;
 void motor_c620_init(FDCAN_HandleTypeDef *hfdcan)
 {
 	M3508.my_fdcan = hfdcan;
-	// 轮1
-	// M3508.motor_pid = pids_create_init(35, 60, 0, 0.004, 1000, 0.5, 0);
-	M3508.motor_pid = pids_create_init(16, 7.5, 0.05, 0.001, 6000, 0.25, 0);
+	
+	#ifdef Steer_Wheel_1
+	uint16_t steer_zero_angle = 3034;
+	int led_band_bias = -2;
+	#endif 
+	#ifdef Steer_Wheel_2
+	M3508.motor_pid = pids_create_init(3, 2.5, 0.001, 0.001, 6000, 0.25, 0);
+	#endif 
+	#ifdef Steer_Wheel_3
+	M3508.motor_pid = pids_create_init(3, 2.5, 0, 0.001, 6000, 0.25, 0);
+	#endif 
+
+	
 
 }
 
