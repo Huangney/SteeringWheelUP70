@@ -106,12 +106,25 @@ void motor_vesc_handle(MotorVescRecvData vesc_recvs)
 void can_filter_config(FDCAN_HandleTypeDef *can_n)
 {
     FDCAN_FilterTypeDef FdcanRxFilter;
-	FdcanRxFilter.IdType = FDCAN_STANDARD_ID;					   // 标准ID
-	FdcanRxFilter.FilterIndex = 0;								   // 滤波器索引
+    FdcanRxFilter.IdType = FDCAN_STANDARD_ID;					   // 标准ID
+
+    if (can_n == &hfdcan2) {
+        FdcanRxFilter.FilterIndex = 14;
+    } else {
+        FdcanRxFilter.FilterIndex = 0;
+    }
+    
 	FdcanRxFilter.FilterType = FDCAN_FILTER_MASK;				   // 滤波器类型
-	FdcanRxFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;		   // 过滤器0关联到FIFO0
+	
+    if (can_n == &hfdcan2) {
+        FdcanRxFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO1;		   // 过滤器0关联到FIFO0
+    } else {
+        FdcanRxFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;		   // 过滤器0关联到FIFO0
+    }
+    
 	FdcanRxFilter.FilterID1 = 0x0000;							   // 32位ID
 	FdcanRxFilter.FilterID2 = 0x0000;							   // 如果FDCAN配置为传统模式的话，这里是32位掩码
+    
 	if (HAL_FDCAN_ConfigFilter(can_n, &FdcanRxFilter) != HAL_OK) // 滤波器初始化
 	{
 		Error_Handler();

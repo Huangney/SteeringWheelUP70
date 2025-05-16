@@ -102,8 +102,12 @@ float minor_angle_ouput;
 // MASTER_CAN 接收到 的数据
 uint8_t MasterCanData[8];
 
-// 安全员计数器
+// 安全员/链接员计数器
 int safe_guard_timer;
+int linker_timer;
+int C620_linker_timer;
+int VESC_linker_timer;
+
 
 // 从主控板传来的目标速度
 int recv_speed_rpm = 0;
@@ -118,6 +122,7 @@ int read_3508_id;
 // 3508 的pid
 Pids m3508_posi_pid;
 
+void GPIO_LED_Control();
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -132,13 +137,61 @@ void WS2812_Refresh()
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 {
   recv_times++;
+  /******     hcan2 来自主机的消息    *********/      
+
+  if (hfdcan->Instance == hfdcan2.Instance)   // 如果符合目标CAN通道
+  {
+		FDCAN_RxHeaderTypeDef RxMessage;
+		HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO1, &RxMessage, MasterCanData);
+    master_recv_times++;
+		linker_timer = SAFE_GUARD_TIME;
+		
+		
+    #ifndef STEER_DEBUG
+    if (RxMessage.Identifier == My_Steer_ID + 114)    // 确认自己的ID正确
+    {
+      // 告诉安全员自己收到了
+      safe_guard_timer = SAFE_GUARD_TIME;
+      // 计算收到的数据
+      recv_speed_rpm = (int)(MasterCanData[0] << 24 | MasterCanData[1] << 16 | MasterCanData[2] << 8 | MasterCanData[3]);
+      recv_angle_code = (int)(MasterCanData[4] << 24 | MasterCanData[5] << 16 | MasterCanData[6] << 8 | MasterCanData[7]);
+      
+      // 在刷新值之前，保留上一次的值用于优化
+      last_recv_angle_deg = recv_angle_deg;
+
+      // 舵轮自身坐标系和解算是反的，反一下就行
+      recv_angle_deg = (360.0 - (recv_angle_code / 16384.0 * 360));
+
+
+      /****   计算舵向最优的转向方式  ****/
+      if (StrWel_Priority == REALBASE_STEERCALC)    // 基于现实的优化
+      {
+        algo_get_steerBetter_vec(test_rpm_value, angle_deg, &recv_speed_rpm, &recv_angle_deg);
+      }
+      else if (StrWel_Priority == TARGBASE_STEERCALC)    // 基于目标的优化
+      {
+        algo_get_steerBetter_vec(test_rpm_value, last_recv_angle_deg, &recv_speed_rpm, &recv_angle_deg);
+      }
+      else
+      {
+        // 不做优化，无事发生
+      }
+    }
+    else if (RxMessage.Identifier == My_Steer_ID + Steer_LinkConfirm)    // 确认自己的ID正确
+    {
+      // 告诉链接员自己收到了
+      linker_timer = SAFE_GUARD_TIME;
+    }
+    #endif
+  }
 
   // 来自 3508 和 VESC 的消息
-  if (hfdcan->Instance == hfdcan1.Instance)
+  else
+  // if (hfdcan->Instance == hfdcan1.Instance)
 	{
 		uint8_t Data[8];
 		FDCAN_RxHeaderTypeDef RxMessage;
-		HAL_FDCAN_GetRxMessage(&hfdcan1, FDCAN_RX_FIFO0, &RxMessage, Data);
+		HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &RxMessage, Data);
 
 		read_3508_id = RxMessage.Identifier;
     if((RxMessage.Identifier >> 8) == 0x02)   // 如果是收到的 C620 的消息
@@ -151,7 +204,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       
 			if(RxMessage.Identifier == M3508.motor_id)
       M3508.msg_cnt++ <= 50 ? get_moto_offset(&M3508, Data) : get_moto_measure(&M3508, Data);
-
+      C620_linker_timer = 250;
+      
       // 预热3508
       if (M3508.preheated == 0)
       {
@@ -190,12 +244,12 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       }
     }
     
-
-
     else if ((RxMessage.Identifier & 0x900) == 0x900)
     {
       MotorVescRecvData vesc_recvs; // 新建接收用的结构体
       vesc_recvs.rx_header = RxMessage;
+      VESC_linker_timer = 250;
+
       for (int i = 0; i < 8; i++)
       {
         vesc_recvs.recv_data[i] = Data[i];
@@ -203,47 +257,6 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       motor_vesc_handle(vesc_recvs);
     }
 	}
-
-  /******     hcan2 来自主机的消息    *********/      
-
-  if (hfdcan->Instance == hfdcan2.Instance)   // 如果符合目标CAN通道
-  {
-		FDCAN_RxHeaderTypeDef RxMessage;
-		HAL_FDCAN_GetRxMessage(&hfdcan2, FDCAN_RX_FIFO0, &RxMessage, MasterCanData);
-    master_recv_times++;
-
-    #ifndef STEER_DEBUG
-    if (RxMessage.Identifier == My_Steer_ID + 114)    // 确认自己的ID正确
-    {
-      // 告诉安全员自己收到了
-      safe_guard_timer = SAFE_GUARD_TIME;
-      // 计算收到的数据
-      recv_speed_rpm = (int)(MasterCanData[0] << 24 | MasterCanData[1] << 16 | MasterCanData[2] << 8 | MasterCanData[3]);
-      recv_angle_code = (int)(MasterCanData[4] << 24 | MasterCanData[5] << 16 | MasterCanData[6] << 8 | MasterCanData[7]);
-      
-      // 在刷新值之前，保留上一次的值用于优化
-      last_recv_angle_deg = recv_angle_deg;
-
-      // 舵轮自身坐标系和解算是反的，反一下就行
-      recv_angle_deg = (360.0 - (recv_angle_code / 16384.0 * 360));
-
-
-      /****   计算舵向最优的转向方式  ****/
-      if (StrWel_Priority == REALBASE_STEERCALC)    // 基于现实的优化
-      {
-        algo_get_steerBetter_vec(test_rpm_value, angle_deg, &recv_speed_rpm, &recv_angle_deg);
-      }
-      else if (StrWel_Priority == TARGBASE_STEERCALC)    // 基于目标的优化
-      {
-        algo_get_steerBetter_vec(test_rpm_value, last_recv_angle_deg, &recv_speed_rpm, &recv_angle_deg);
-      }
-      else
-      {
-        // 不做优化，无事发生
-      }
-    }
-    #endif
-  }
   
 
   HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
@@ -325,7 +338,7 @@ int main(void)
 
 
   HAL_Delay(1000);
-  motor_vesc_init(&hfdcan1);
+  // motor_vesc_init(&hfdcan1);
   motor_vesc_init(&hfdcan2);
   
   WS2812_InitBuffer();
@@ -340,8 +353,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // WS2812_Wonder(0.5);
     
+    
+    
+    // WS2812_Wonder(0.5);
+    GPIO_LED_Control();
 
     WS2812_Angles(40, 0, 112, 6, 0.5, angle_deg_raw, 1, led_band_bias);
     WS2812_Angles_Add(122, 103, 0, 6, 0.5, (180 - angle_deg_raw), 0, led_band_bias);
@@ -399,6 +415,67 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void GPIO_LED_Control()
+{
+  // 检测是否连接到主机
+  if (linker_timer > 0)
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+  }
+  else
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+  }
+
+  // 检测是否正在运行
+  if (safe_guard_timer > 0)
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+  }
+  else
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+  }
+
+  // 检测是否连接到C620
+  if (C620_linker_timer > 0)
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
+  }
+  else
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+  }
+
+  // 检测是否连接到VESC
+  if (VESC_linker_timer > 0)
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
+  }
+  else
+  {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_SET);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* USER CODE END 4 */
 
