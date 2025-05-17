@@ -347,6 +347,10 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
   // 4ms一次的定时器中断
   safe_guard_timer -= 4;
+  linker_timer -= 4;
+  C620_linker_timer -= 4;
+  VESC_linker_timer -= 4;
+
 
   uint16_t read_angle_temp = 0;
   getMotorAngle(&read_angle_temp, steer_zero_angle);
@@ -360,16 +364,16 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
-/**0
+/**
   * @brief This function handles TIM7 global interrupt, DAC2 and DAC4 channel underrun error interrupts.
   */
 void TIM7_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_DAC_IRQn 0 */
 
-  snprintf((char*)vofa_send_buffers, sizeof(vofa_send_buffers), "d:%.1f,%.1f,%d,%d\n", angle_deg, angle_degree_debug, targ_speed, M3508.speed_rpm);
+  // snprintf((char*)vofa_send_buffers, sizeof(vofa_send_buffers), "d:%.1f,%.1f,%d,%d\n", angle_deg, angle_degree_debug, targ_speed, M3508.speed_rpm);
   // snprintf((char*)vofa_send_buffers, sizeof(vofa_send_buffers), "d:%.1f\n", angle_deg);
-  HAL_UART_Transmit_DMA(&huart3, vofa_send_buffers, sizeof(vofa_send_buffers));
+  // HAL_UART_Transmit_DMA(&huart3, vofa_send_buffers, sizeof(vofa_send_buffers));
 
   /* USER CODE END TIM7_DAC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim7);

@@ -30,13 +30,18 @@ extern "C" {
 #include "stm32g4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+/* USER CODE BEGIN Inclu
+des */
 
 // #define Steer_Wheel_1
 // #define Steer_Wheel_2
 #define Steer_Wheel_3
 
 // #define STEER_DEBUG
+
+
+#define Steer_LinkConfirm 10010
+#define Steer_Control 10000
 
 #ifdef Steer_Wheel_1
 #define My_Steer_ID 1
@@ -62,6 +67,10 @@ extern float angle_degree_debug;
 
 // 以下extern可以找到在stm32it中找到，用于保护丢失信号
 extern int safe_guard_timer;
+extern int linker_timer;
+extern int C620_linker_timer;
+extern int VESC_linker_timer;
+
 extern int recv_speed_rpm;
 
 /* USER CODE END Includes */

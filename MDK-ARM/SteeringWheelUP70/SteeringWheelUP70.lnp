@@ -30,14 +30,13 @@
 "steeringwheelup70\stm32g4xx_hal_uart.o"
 "steeringwheelup70\stm32g4xx_hal_uart_ex.o"
 "steeringwheelup70\system_stm32g4xx.o"
-"steeringwheelup70\motor_vesc.o"
-"steeringwheelup70\motor_vesc__funcs.o"
 "steeringwheelup70\as5047.o"
 "steeringwheelup70\pids.o"
 "steeringwheelup70\ws2812_yx.o"
 "steeringwheelup70\motor_c620.o"
 "steeringwheelup70\bsp_fdcan.o"
 "steeringwheelup70\algorithm.o"
+"steeringwheelup70\motor_vesc.o"
 --strict --scatter "SteeringWheelUP70\SteeringWheelUP70.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
