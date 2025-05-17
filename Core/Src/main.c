@@ -133,6 +133,8 @@ void WS2812_Refresh()
   HAL_SPI_Transmit_DMA(&hspi2, (uint8_t*)WS2812buf2send, 24 * (LED_Nums + 1));
 }
 
+FDCAN_RxHeaderTypeDef CAN2RxMessage;
+
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 {
@@ -142,13 +144,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
   if (hfdcan->Instance == hfdcan2.Instance)   // 如果符合目标CAN通道
   {
 		FDCAN_RxHeaderTypeDef RxMessage;
-		HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &RxMessage, MasterCanData);
+		HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &CAN2RxMessage, MasterCanData);
     master_recv_times++;
-		linker_timer = SAFE_GUARD_TIME;
-		int targ_id = RxMessage.Identifier - 114;
 		
     #ifndef STEER_DEBUG
-    if (targ_id == My_Steer_ID)    // 确认自己的ID正确
+    if (CAN2RxMessage.Identifier == Steer_Control * My_Steer_ID)    // 确认自己的ID正确
     {
       // 告诉安全员自己收到了
       safe_guard_timer = SAFE_GUARD_TIME;
@@ -177,13 +177,12 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
         // 不做优化，无事发生
       }
     }
-    else if (RxMessage.Identifier == My_Steer_ID + Steer_LinkConfirm)    // 确认自己的ID正确
+    else if (CAN2RxMessage.Identifier == Steer_LinkConfirm * My_Steer_ID)    // 确认自己的ID正确
     {
       // 告诉链接员自己收到了
       linker_timer = SAFE_GUARD_TIME;
     }
     #endif
-		HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
   }
 
   // 来自 3508 和 VESC 的消息
@@ -256,10 +255,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       }
       motor_vesc_handle(vesc_recvs);
     }
-		HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
 	}
   
-
   HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
 }
 /* USER CODE END PD */
@@ -336,11 +333,12 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim17);
 
   motor_c620_init(&hfdcan1);
+  HAL_Delay(100); 
 
-
-  HAL_Delay(1000);
+  bsp_can_init(&hfdcan2);
+  HAL_Delay(100); 
   motor_vesc_init(&hfdcan1);
-  motor_vesc_init(&hfdcan2);
+  HAL_Delay(100); 
   
   WS2812_InitBuffer();
 
@@ -390,8 +388,8 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
-  RCC_OscInitStruct.PLL.PLLN = 20;
+  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV4;
+  RCC_OscInitStruct.PLL.PLLN = 81;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;

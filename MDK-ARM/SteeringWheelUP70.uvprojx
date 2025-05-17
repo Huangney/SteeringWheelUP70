@@ -396,7 +396,7 @@
           <Files>
             <File>
               <FileName>main.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
@@ -635,7 +635,7 @@
             </File>
             <File>
               <FileName>stm32g4xx_it.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>../Core/Src/stm32g4xx_it.c</FilePath>
             </File>
             <File>
@@ -968,44 +968,39 @@
           <GroupName>Libs</GroupName>
           <Files>
             <File>
-              <FileName>motor_vesc.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\Libs\Src\motor_vesc.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>motor_vesc__funcs.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\Libs\Src\motor_vesc__funcs.cpp</FilePath>
-            </File>
-            <File>
               <FileName>AS5047.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>..\Libs\Src\AS5047.c</FilePath>
             </File>
             <File>
               <FileName>pids.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>..\Libs\Src\pids.c</FilePath>
             </File>
             <File>
               <FileName>WS2812_yx.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>..\Libs\Src\WS2812_yx.c</FilePath>
             </File>
             <File>
               <FileName>motor_c620.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>..\Libs\Src\motor_c620.c</FilePath>
             </File>
             <File>
               <FileName>bsp_fdcan.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>..\Libs\Src\bsp_fdcan.c</FilePath>
             </File>
             <File>
               <FileName>algorithm.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>..\Libs\Src\algorithm.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor_vesc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libs\Src\motor_vesc.c</FilePath>
             </File>
           </Files>
         </Group>

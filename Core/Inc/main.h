@@ -30,16 +30,18 @@ extern "C" {
 #include "stm32g4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+/* USER CODE BEGIN Inclu
+des */
 
 // #define Steer_Wheel_1
-#define Steer_Wheel_2
-// #define Steer_Wheel_3
+// #define Steer_Wheel_2
+#define Steer_Wheel_3
 
-#define STEER_DEBUG
+// #define STEER_DEBUG
 
 
-#define Steer_LinkConfirm 50
+#define Steer_LinkConfirm 10010
+#define Steer_Control 10000
 
 #ifdef Steer_Wheel_1
 #define My_Steer_ID 1

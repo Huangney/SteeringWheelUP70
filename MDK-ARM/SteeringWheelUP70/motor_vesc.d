@@ -1,4 +1,4 @@
-steeringwheelup70/motor_vesc.o: ..\Libs\Src\motor_vesc.cpp \
+steeringwheelup70/motor_vesc.o: ..\Libs\Src\motor_vesc.c \
   ..\Libs\Inc\motor_vesc.h ..\Core\Inc\fdcan.h ..\Core\Inc\main.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal.h \
   ..\Core\Inc\stm32g4xx_hal_conf.h \
@@ -7,8 +7,6 @@ steeringwheelup70/motor_vesc.o: ..\Libs\Src\motor_vesc.cpp \
   ..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h \
   ..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g473xx.h \
   ..\Drivers\CMSIS\Include\core_cm4.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\libcxx\stdint.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\libcxx\__config \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h \
   ..\Drivers\CMSIS\Include\cmsis_version.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -18,9 +16,7 @@ steeringwheelup70/motor_vesc.o: ..\Libs\Src\motor_vesc.cpp \
   ..\Drivers\CMSIS\Include\mpu_armv7.h \
   ..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\system_stm32g4xx.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\libcxx\stddef.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\libcxx\__nullptr \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_rcc_ex.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_gpio.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_gpio_ex.h \
