@@ -36,7 +36,7 @@ extern "C" {
 #define Steer_Wheel_2
 // #define Steer_Wheel_3
 
-// #define STEER_DEBUG
+#define STEER_DEBUG
 
 
 #define Steer_LinkConfirm 50

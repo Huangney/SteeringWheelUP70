@@ -62,7 +62,7 @@
 
 #ifdef STEER_DEBUG
 // #define STEER_SPEED_DEBUG
-#define STEER_POSITION_DEBUG
+// #define STEER_POSITION_DEBUG
 #endif
 
 // 舵轮的 舵向轮向优先级 优化方式
@@ -142,13 +142,13 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
   if (hfdcan->Instance == hfdcan2.Instance)   // 如果符合目标CAN通道
   {
 		FDCAN_RxHeaderTypeDef RxMessage;
-		HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO1, &RxMessage, MasterCanData);
+		HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &RxMessage, MasterCanData);
     master_recv_times++;
 		linker_timer = SAFE_GUARD_TIME;
-		
+		int targ_id = RxMessage.Identifier - 114;
 		
     #ifndef STEER_DEBUG
-    if (RxMessage.Identifier == My_Steer_ID + 114)    // 确认自己的ID正确
+    if (targ_id == My_Steer_ID)    // 确认自己的ID正确
     {
       // 告诉安全员自己收到了
       safe_guard_timer = SAFE_GUARD_TIME;
@@ -183,11 +183,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       linker_timer = SAFE_GUARD_TIME;
     }
     #endif
+		HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
   }
 
   // 来自 3508 和 VESC 的消息
-  else
-  // if (hfdcan->Instance == hfdcan1.Instance)
+  else if (hfdcan->Instance == hfdcan1.Instance)
 	{
 		uint8_t Data[8];
 		FDCAN_RxHeaderTypeDef RxMessage;
@@ -244,7 +244,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       }
     }
     
-    else if ((RxMessage.Identifier & 0x900) == 0x900)
+    if ((RxMessage.Identifier & 0x900) == 0x900)
     {
       MotorVescRecvData vesc_recvs; // 新建接收用的结构体
       vesc_recvs.rx_header = RxMessage;
@@ -256,6 +256,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       }
       motor_vesc_handle(vesc_recvs);
     }
+		HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
 	}
   
 
@@ -338,7 +339,7 @@ int main(void)
 
 
   HAL_Delay(1000);
-  // motor_vesc_init(&hfdcan1);
+  motor_vesc_init(&hfdcan1);
   motor_vesc_init(&hfdcan2);
   
   WS2812_InitBuffer();

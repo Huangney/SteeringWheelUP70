@@ -75,12 +75,12 @@ void motor_vesc_handle(MotorVescRecvData vesc_recvs)
 
     // 和哪个电机匹配就和谁发
     if (can_id == motor_vesc_1.motor_can_id)
-    {
+    { 
         targ_motor_vesc = &motor_vesc_1;
     }
 
     {
-        targ_motor_vesc->setMotorRPM(test_rpm_value);
+        targ_motor_vesc->setMotorRPM(1000);
 
         // 获取电调上报的消息类型
         CanPacketType vesc_status_type = (CanPacketType)(vesc_recvs.rx_header.Identifier >> 8);
@@ -106,7 +106,7 @@ void motor_vesc_handle(MotorVescRecvData vesc_recvs)
 void can_filter_config(FDCAN_HandleTypeDef *can_n)
 {
     FDCAN_FilterTypeDef FdcanRxFilter;
-    FdcanRxFilter.IdType = FDCAN_STANDARD_ID;					   // 标准ID
+    FdcanRxFilter.IdType = FDCAN_EXTENDED_ID;					   // 标准ID
 
     if (can_n == &hfdcan2) {
         FdcanRxFilter.FilterIndex = 14;
@@ -115,13 +115,7 @@ void can_filter_config(FDCAN_HandleTypeDef *can_n)
     }
     
 	FdcanRxFilter.FilterType = FDCAN_FILTER_MASK;				   // 滤波器类型
-	
-    if (can_n == &hfdcan2) {
-        FdcanRxFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO1;		   // 过滤器0关联到FIFO0
-    } else {
-        FdcanRxFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;		   // 过滤器0关联到FIFO0
-    }
-    
+    FdcanRxFilter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;		   // 过滤器0关联到FIFO0
 	FdcanRxFilter.FilterID1 = 0x0000;							   // 32位ID
 	FdcanRxFilter.FilterID2 = 0x0000;							   // 如果FDCAN配置为传统模式的话，这里是32位掩码
     
