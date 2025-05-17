@@ -64,11 +64,7 @@ void MotorVESC::sendCanTXBuffer(CanPacketType cmd_type, float values)
             break;
     }
 
-    // while (HAL_CAN_GetTxMailboxesFreeLevel(targ_can_n) == 0);     // 等待CAN邮箱
-	// HAL_CAN_AddTxMessage(targ_can_n, &TxMsg, txbuf, &txmailbox);
-
     HAL_FDCAN_AddMessageToTxFifoQ(targ_can_n, &TxMsg, txbuf);
-
 }
 
 float limit_abs(float targ_num, float limit)
