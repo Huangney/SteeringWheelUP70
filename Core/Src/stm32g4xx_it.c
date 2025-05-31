@@ -26,7 +26,7 @@
 #include "motor_c620.h"
 #include "stdio.h"
 #include "stm32g4xx_hal_uart.h"
-
+#include "math.h"
 #include "motor_vesc.h"
 #include "string.h"
 #include "pids.h"
@@ -351,6 +351,9 @@ void TIM6_DAC_IRQHandler(void)
   C620_linker_timer -= 4;
   VESC_linker_timer -= 4;
 
+  // 记录最大电流 （单位：A）
+  vesc_max_current = fmax(motor_vesc_1.current_real, vesc_max_current);
+  m3508_max_current = fmax((M3508.real_current / 16384.0 * 20.0), m3508_max_current);
 
   uint16_t read_angle_temp = 0;
   getMotorAngle(&read_angle_temp, steer_zero_angle);

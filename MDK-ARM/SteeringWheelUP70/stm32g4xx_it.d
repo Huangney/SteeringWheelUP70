@@ -39,6 +39,6 @@ steeringwheelup70/stm32g4xx_it.o: ..\Core\Src\stm32g4xx_it.c \
   ..\Core\Inc\main.h ..\Libs\Inc\motor_c620.h ..\Libs\Inc\bsp_fdcan.h \
   ..\Core\Inc\fdcan.h ..\Libs\Inc\pids.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  ..\Libs\Inc\motor_vesc.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h ..\Libs\Inc\motor_vesc.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h ..\Libs\Inc\pids.h \
-  ..\Libs\Inc\WS2812_yx.h C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h
+  ..\Libs\Inc\WS2812_yx.h

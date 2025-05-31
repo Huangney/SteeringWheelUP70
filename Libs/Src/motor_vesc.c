@@ -184,7 +184,7 @@ void motor_vesc_handle(MotorVescRecvData vesc_recvs)
             {
                 targ_motor_vesc->motor_duty_real = (vesc_recvs.recv_data[6] * 256 + vesc_recvs.recv_data[7]) / 1000.0;
 
-                read_current = (vesc_recvs.recv_data[4] * 256 + vesc_recvs.recv_data[5]) / 10.0;
+                targ_motor_vesc->current_real = ((int16_t)(vesc_recvs.recv_data[4] << 8 | vesc_recvs.recv_data[5])) / 10.0;
 
                 targ_motor_vesc->motor_rpm_real = (int32_t)(vesc_recvs.recv_data[0] << 24 | vesc_recvs.recv_data[1] << 16
                     | vesc_recvs.recv_data[2] << 8 | vesc_recvs.recv_data[3]);

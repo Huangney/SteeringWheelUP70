@@ -78,18 +78,21 @@ float set_angle_degree = 60.0;
 // 角度环DEBUG用的变量
 float angle_degree_debug = 30;
 
+// VESC最大电流
+float vesc_max_current = 0;
+float m3508_max_current = 0;
 
 
 #ifdef Steer_Wheel_1
-uint16_t steer_zero_angle = 3034;
+uint16_t steer_zero_angle = 16081;
 int led_band_bias = -2;
 #endif 
 #ifdef Steer_Wheel_2
-uint16_t steer_zero_angle = 14202;
+uint16_t steer_zero_angle = 5121;
 int led_band_bias = -8;
 #endif 
 #ifdef Steer_Wheel_3
-uint16_t steer_zero_angle = 7054;
+uint16_t steer_zero_angle = 12450;
 int led_band_bias = -8;
 #endif 
 
@@ -324,7 +327,7 @@ int main(void)
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   // 轮1
-	m3508_posi_pid = pids_create_init(256, 64, 0, 0.001, 8000, 0.15, 0);
+	m3508_posi_pid = pids_create_init(1288, 256, 0.0, 0.001, 8000, 0.15, 0);
   
   
   // 请在其他部分初始化好了之后，再启动CAN总线

@@ -67,22 +67,23 @@ float calc_output(struct pids* targ_pid, float error, float output_lim)
 
     // 为Kd计算经过一阶低通滤波的误差
     targ_pid->kd_error = targ_pid->kd_error + targ_pid->delta_filter_rate * (error - targ_pid->kd_error);
-
-    // 计算普通PID
-    pid_output = targ_pid->Kp * error + targ_pid->Ki * targ_pid->integral_errors + targ_pid->Kd * ((targ_pid->kd_error - targ_pid->last_error) / targ_pid->delta_t);
-
+    
     // 累加积分项
-    targ_pid->integral_errors += error * targ_pid->delta_t;
-
-    // 记录误差项，用于下次计算
-    targ_pid->prev_error = targ_pid->last_error;
-    targ_pid->last_error = error;
+    targ_pid->integral_errors += targ_pid->Ki * error * targ_pid->delta_t;
 
     // 如果用户配置了积分限幅，作限幅
     if (targ_pid->integral_limit > 0)
     {
         targ_pid->integral_errors = limit_ab(targ_pid->integral_errors, targ_pid->integral_limit);
     }
+
+    // 计算普通PID
+    pid_output = targ_pid->Kp * error + targ_pid->integral_errors + targ_pid->Kd * ((targ_pid->kd_error - targ_pid->last_error) / targ_pid->delta_t);
+
+    // 记录误差项，用于下次计算
+    targ_pid->prev_error = targ_pid->last_error;
+    targ_pid->last_error = error;
+
     
     // 如果用户配置了反向，作反向输出
     if (targ_pid->reverse)

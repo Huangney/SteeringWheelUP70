@@ -53,29 +53,73 @@ void algo_get_steerBetter_vec(int velo_now, float angleDeg_now, int* velo_targ, 
         *angleDeg_targ -= 360;
     }
     
+    // int velo_0 = *velo_targ;
+    // float angleDeg_0 = *angleDeg_targ;
+    // int velo_1 = -*velo_targ;
+    // float angleDeg_1 = *angleDeg_targ - 180.0;
+    // int velo_2 = -*velo_targ;
+    // float angleDeg_2 = *angleDeg_targ + 180.0;
+    // int velo_3 = -*velo_targ;
+    // float angleDeg_3 = *angleDeg_targ + 180.0;
+    int velos[4];
+    float angleDegs[4];
+
+    if (*angleDeg_targ < 180)
+    {
+        velos[0] = -*velo_targ;
+        angleDegs[0] = *angleDeg_targ - 180.0;
+        velos[1] = *velo_targ;
+        angleDegs[1] = *angleDeg_targ;
+        velos[2] = -*velo_targ;
+        angleDegs[2] = *angleDeg_targ + 180.0;
+        velos[3] = *velo_targ;
+        angleDegs[3] = *angleDeg_targ + 360.0;
+    }
+    else
+    {
+        velos[0] = *velo_targ;
+        angleDegs[0] = *angleDeg_targ - 360.0;
+        velos[1] = -*velo_targ;
+        angleDegs[1] = *angleDeg_targ - 180.0;
+        velos[2] = *velo_targ;
+        angleDegs[2] = *angleDeg_targ;
+        velos[3] = -*velo_targ;
+        angleDegs[3] = *angleDeg_targ + 180.0;
+    }
     
-    int velo_mid = *velo_targ;
-    float angleDeg_mid = *angleDeg_targ;
+    // 角度归一化到0-360度
+    while (angleDeg_now < 0) angleDeg_now += 360.0;
+    while (angleDeg_now >= 360.0) angleDeg_now -= 360.0;
 
-    int velo_left = -*velo_targ;
-    float angleDeg_left = *angleDeg_targ - 180.0;
-    int velo_right = -*velo_targ;
-    float angleDeg_right = *angleDeg_targ + 180.0;
+    float steer_distans[4];
+    for (int i = 0; i < 4; i++)
+    {
+        steer_distans[i] = fabs(angleDegs[i] - angleDeg_now);
+    }
 
-    float steer_distan_mid = fabs(angleDeg_mid - angleDeg_now);
-    float steer_distan_left = fabs(angleDeg_left - angleDeg_now);
-    float steer_distan_right = fabs(angleDeg_right - angleDeg_now);
+    float min_distan = 999;
+    for (int i = 0; i < 4; i++)
+    {
+        if (steer_distans[i] < min_distan)
+        {
+            min_distan = steer_distans[i];
+        }
+    }
 
     // 选择舵向最小的方法
-    if (steer_distan_left < steer_distan_mid && steer_distan_left < steer_distan_right)
+    for (int i = 0; i < 4; i++)
     {
-        *velo_targ = velo_left;
-        *angleDeg_targ = angleDeg_left;
-    }
-    if (steer_distan_right < steer_distan_mid && steer_distan_right < steer_distan_left)
-    {
-        *velo_targ = velo_right;
-        *angleDeg_targ = angleDeg_right;
+        if (min_distan == steer_distans[i])
+        {
+            *velo_targ = velos[i];
+            
+            // 角度归一化到0-360度
+            while (angleDegs[i] < 0) angleDegs[i] += 360.0;
+            while (angleDegs[i] >= 360.0) angleDegs[i] -= 360.0;
+
+            *angleDeg_targ = angleDegs[i];
+            return;
+        }
     }
 }
 

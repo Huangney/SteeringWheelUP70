@@ -9,6 +9,7 @@
 #ifndef MOTOR_VESC_YONG
 #define MOTOR_VESC_YONG
 #include "fdcan.h"
+#include "main.h"
 
 float limit_abs(float targ_num, float limit);
 extern int test_rpm_value;
@@ -60,6 +61,7 @@ typedef struct MotorVESC
     int32_t motor_rpm_real;             // 电机实际每分钟转速
     float motor_duty_set;               // 电机设置占空比
     int motor_rpm_set;                  // 电机设置每分钟转速
+    float current_real;
     FDCAN_HandleTypeDef* targ_can_n;    // 哪一条CAN总线
 
     void (*setMotorDuty)(struct MotorVESC* self, float duty);
@@ -76,5 +78,16 @@ void motor_vesc_init(FDCAN_HandleTypeDef *hcan);     // 可以被用户自定义
 void bsp_can_init(FDCAN_HandleTypeDef *hcan);
 int motor_vesc_get_rpm(int motor_id);
 void motor_vesc_handle(MotorVescRecvData vesc_recvs);
+
+#ifdef Steer_Wheel_1
+extern MotorVESC motor_vesc_1;
+#endif 
+#ifdef Steer_Wheel_2
+extern MotorVESC motor_vesc_1;
+#endif 
+#ifdef Steer_Wheel_3
+extern MotorVESC motor_vesc_1;
+#endif 
+
 
 #endif

@@ -30,12 +30,11 @@ extern "C" {
 #include "stm32g4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Inclu
-des */
+/* USER CODE BEGIN Includes */
 
-// #define Steer_Wheel_1
+#define Steer_Wheel_1
 // #define Steer_Wheel_2
-#define Steer_Wheel_3
+// #define Steer_Wheel_3
 
 // #define STEER_DEBUG
 
@@ -72,6 +71,8 @@ extern int C620_linker_timer;
 extern int VESC_linker_timer;
 
 extern int recv_speed_rpm;
+extern float vesc_max_current;
+extern float m3508_max_current;
 
 /* USER CODE END Includes */
 

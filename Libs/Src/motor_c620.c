@@ -24,13 +24,13 @@ void motor_c620_init(FDCAN_HandleTypeDef *hfdcan)
 	M3508.my_fdcan = hfdcan;
 	
 	#ifdef Steer_Wheel_1
-	M3508.motor_pid = pids_create_init(3, 2.5, 0.001, 0.001, 6000, 0.25, 0);
+	M3508.motor_pid = pids_create_init(10, 5, 0.000, 0.001, 6000, 0.25, 0);
 	#endif 
 	#ifdef Steer_Wheel_2
-	M3508.motor_pid = pids_create_init(3, 2.5, 0.001, 0.001, 6000, 0.25, 0);
+	M3508.motor_pid = pids_create_init(10, 5, 0.000, 0.001, 6000, 0.25, 0);
 	#endif 
 	#ifdef Steer_Wheel_3
-	M3508.motor_pid = pids_create_init(3, 2.5, 0, 0.001, 6000, 0.25, 0);
+	M3508.motor_pid = pids_create_init(10, 5, 0.000, 0.001, 6000, 0.25, 0);
 	#endif 
 
 	
@@ -39,7 +39,7 @@ void motor_c620_init(FDCAN_HandleTypeDef *hfdcan)
 
 void motor_c620_set_rpm(int motor_1_rpm, int motor_2_rpm, int motor_3_rpm, int motor_4_rpm, int current_lim)
 {
-	float targ_current_temp = M3508.motor_pid.calc_output_incremental(&M3508.motor_pid, (motor_1_rpm - M3508.speed_rpm), 16000);
+	float targ_current_temp = M3508.motor_pid.calc_output(&M3508.motor_pid, (motor_1_rpm - M3508.speed_rpm), 16000);
 
 	if (targ_current_temp > current_lim)
 	{
@@ -51,6 +51,20 @@ void motor_c620_set_rpm(int motor_1_rpm, int motor_2_rpm, int motor_3_rpm, int m
 	}
 	
 	targ_current_1 = targ_current_temp;
+
+	// 限制爬坡率
+	if (targ_current_temp - targ_current_1 > 2000)
+	{
+		targ_current_1 += 2000;
+	}
+	else if (targ_current_temp - targ_current_1 < -2000)
+	{
+		targ_current_1 -= 2000;
+	}
+	else
+	{
+		targ_current_1 = targ_current_temp;
+	}
 
 	set_moto_current(M3508.my_fdcan, targ_current_1, targ_current_1);
 }
